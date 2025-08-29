@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📅 Daily Quiz | 日本語マスター</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .quiz-container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    .question-box {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #eee;
+      border-radius: 4px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #0077b6;
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .option-label {
+      display: block;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin: 10px 0;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .option-label:hover {
+      background: #e0f7fa;
+      border-color: #0077b6;
+    }
+
+    .option-label.selected {
+      border-color: #0077b6;
+      background: #e0f7fa;
+    }
+
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: #0077b6;
+      color: white;
+      border: none;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      margin: 30px 0;
+      font-weight: 500;
+    }
+
+    .level-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      color: white;
+      margin-left: 10px;
+    }
+
+    .n5 { background: #457b9d; }
+    .n4 { background: #e9c46a; }
+    .n3 { background: #e76f51; }
+    .n2 { background: #9c6644; }
+    .n1 { background: #9437ff; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">日本語マスター</div>
+    <div class="user-info">
+      <span class="username">User</span>
+    </div>
+  </nav>
+
+  <div class="quiz-container">
+    <h1>📅 Daily Challenge Quiz</h1>
+    <p>You'll get 100 random questions from N5 to N1 levels.</p>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill">0%</div>
+    </div>
+
+    <div id="quizContainer">
+      <!-- Questions loaded by JS -->
+    </div>
+
+    <button class="submit-btn" onclick="submitQuiz()">Submit Quiz (100 Questions)</button>
+  </div>
+
+  <script src="js/quiz-data.js"></script>
+  <script>
+    const TOTAL_QUESTIONS = 100;
+    let userAnswers = {};
+    let shuffledQuestions = [];
+
+    window.onload = function() {
+      const currentUser = JSON.parse(localStorage.getItem('jlptCurrentUser'));
+      const users = JSON.parse(localStorage.getItem('jlptUsers')) || [];
+
+      if (!currentUser) {
+        alert('Please log in first.');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const user = users.find(u => u.email === currentUser.email);
+      if (!user || !user.verified) {
+        alert('❌ Please verify your email to access the Daily Quiz.');
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      loadAndShuffleQuestions();
+      renderQuiz();
+      updateProgress();
+    };
+
+    function loadAndShuffleQuestions() {
+      const allQuestions = [];
+      Object.keys(window.quizQuestions).forEach(level => {
+        window.quizQuestions[level].forEach(q => {
+          allQuestions.push({ ...q, level });
+        });
+      });
+
+      // Shuffle using Fisher-Yates
+      for (let i = allQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allQuestions[i], allQuestions[j]] = [allQuestions[j], allQuestions[i]];
+      }
+
+      shuffledQuestions = allQuestions.slice(0, TOTAL_QUESTIONS);
+    }
+
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+
+      shuffledQuestions.forEach((q, index) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'question-box';
+
+        const options = q.options.map((opt, i) => {
+          const isSelected = userAnswers[index] === i;
+          return `
+            <label class="option-label ${isSelected ? 'selected' : ''}" onclick="selectAnswer(${index}, ${i})">
+              <span style="margin-right:8px;">●</span>
+              ${String.fromCharCode(65 + i)}. ${opt}
+            </label>
+          `;
+        }).join('');
+
+        qDiv.innerHTML = `
+          <h3>Q${index + 1} <span class="level-badge ${q.level.toLowerCase()}">${q.level}</span></h3>
+          <p><strong>${q.question}</strong></p>
+          <div class="options">${options}</div>
+        `;
+
+        container.appendChild(qDiv);
+      });
+    }
+
+    function selectAnswer(qIndex, ansIndex) {
+      userAnswers[qIndex] = ansIndex;
+      updateProgress();
+      renderQuiz(); // Re-render to show selected dot
+    }
+
+    function updateProgress() {
+      const filled = Object.keys(userAnswers).length;
+      const percent = Math.round((filled / TOTAL_QUESTIONS) * 100);
+      document.getElementById('progressFill').style.width = percent + '%';
+    }
+
+    function submitQuiz() {
+      const form = document.createElement('form');
+      form.method = 'GET';
+      form.action = 'result-daily.html';
+
+      shuffledQuestions.forEach((q, i) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = `q${i}`;
+        input.value = userAnswers[i] !== undefined ? userAnswers[i] : '-1';
+        form.appendChild(input);
+      });
+
+      const typeInput = document.createElement('input');
+      typeInput.type = 'hidden';
+      typeInput.name = 'type';
+      typeInput.value = 'daily';
+      form.appendChild(typeInput);
+
+      document.body.appendChild(form);
+      form.submit(); // This should work now
+    }
+  </script>
+</body>
+</html>

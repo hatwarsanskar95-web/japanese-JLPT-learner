@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>日本語マスター | Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .level-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .level-card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+      border-top: 5px solid #0077b6;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .level-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .level-card h3 {
+      color: #0077b6;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: #eee;
+      border-radius: 3px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      background: #0077b6;
+    }
+
+    .daily-quiz-btn {
+      background: linear-gradient(135deg, #e63946, #c1121f);
+      color: white;
+      border: none;
+      padding: 18px;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      font-weight: 500;
+      margin: 30px 0;
+      transition: background 0.3s;
+    }
+
+    .daily-quiz-btn:hover {
+      background: #b00;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 2px;
+      margin: 20px 0;
+      border-bottom: 2px solid #ddd;
+    }
+
+    .tab {
+      padding: 14px 24px;
+      background: #f1f1f1;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      border-radius: 8px 8px 0 0;
+      transition: all 0.3s;
+    }
+
+    .tab.active {
+      background: #0077b6;
+      color: white;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">日本語マスター</div>
+    <div class="user-info">
+      <span class="username">User</span>
+      <span class="streak">🔥 1-day streak</span>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1 style="margin:20px 0;">JLPT Learning Dashboard</h1>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="showSection('study')">📚 Study</button>
+      <button class="tab" onclick="showSection('quiz')">📝 Quiz</button>
+    </div>
+
+    <!-- Study Section -->
+    <div id="studySection">
+      <div class="level-cards">
+        <!-- N5 -->
+        <div class="level-card" onclick="window.location.href='study-materials.html?level=N5'">
+          <h3>N5</h3>
+          <p>Beginner Level</p>
+          <div class="progress-bar"><div class="progress" style="width:30%"></div></div>
+          <small>30% Complete</small>
+        </div>
+
+        <!-- N4 -->
+        <div class="level-card" onclick="window.location.href='study-materials.html?level=N4'">
+          <h3>N4</h3>
+          <p>Elementary Level</p>
+          <div class="progress-bar"><div class="progress" style="width:15%"></div></div>
+          <small>15% Complete</small>
+        </div>
+
+        <!-- N3 -->
+        <div class="level-card" onclick="window.location.href='study-materials.html?level=N3'">
+          <h3>N3</h3>
+          <p>Intermediate Level</p>
+          <div class="progress-bar"><div class="progress" style="width:5%"></div></div>
+          <small>5% Complete</small>
+        </div>
+
+        <!-- N2 -->
+        <div class="level-card" onclick="window.location.href='study-materials.html?level=N2'">
+          <h3>N2</h3>
+          <p>Upper Intermediate</p>
+          <div class="progress-bar"><div class="progress" style="width:0%"></div></div>
+          <small>Locked</small>
+        </div>
+
+        <!-- N1 -->
+        <div class="level-card" onclick="window.location.href='study-materials.html?level=N1'">
+          <h3>N1</h3>
+          <p>Advanced Level</p>
+          <div class="progress-bar"><div class="progress" style="width:0%"></div></div>
+          <small>Locked</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz Section -->
+    <div id="quizSection" style="display:none;">
+      <div class="card">
+        <h2>📝 Practice JLPT Quiz</h2>
+        <p>Select any JLPT level and test your knowledge instantly.</p>
+        <p style="color:#555; font-size:0.95rem;">
+          🔁 Questions are shuffled randomly when you start
+        </p>
+        <button class="btn btn-primary" style="width:100%; padding:16px; font-size:1.1rem;" 
+                onclick="window.location.href='quiz.html'">
+          🚀 Open Quiz
+        </button>
+      </div>
+    </div>
+
+    <!-- Daily Quiz Section -->
+    <div class="card">
+      <h2>📅 Daily Challenge Quiz</h2>
+      <p><strong>100 random questions</strong> from N5 to N1 — test your full JLPT knowledge!</p>
+      <p style="color:#555; font-size:0.95rem;">
+        🔐 <strong>Verified users only</strong> | 🎲 Mixed difficulty | 📊 Instant results
+      </p>
+      <button class="daily-quiz-btn" onclick="startDailyQuiz()">
+        Start Daily Quiz (100 Questions)
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    function showSection(section) {
+      document.getElementById('studySection').style.display = section === 'study' ? 'block' : 'none';
+      document.getElementById('quizSection').style.display = section === 'quiz' ? 'block' : 'none';
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelector(`.tab:nth-child(${section === 'study' ? 1 : 2})`).classList.add('active');
+    }
+
+    // Daily Quiz – Check login & verification
+    function startDailyQuiz() {
+      const currentUser = JSON.parse(localStorage.getItem('jlptCurrentUser'));
+      const users = JSON.parse(localStorage.getItem('jlptUsers')) || [];
+
+      if (!currentUser) {
+        alert('Please log in first.');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const user = users.find(u => u.email === currentUser.email);
+      if (!user || !user.verified) {
+        alert('❌ Please verify your email to access the Daily Quiz.');
+        return;
+      }
+
+      window.location.href = 'daily-quiz.html';
+    }
+
+    // On load
+    window.onload = function() {
+      const usernameEl = document.querySelector('.navbar .user-info .username');
+      const streakEl = document.querySelector('.navbar .streak');
+
+      // Restore user session
+      const currentUser = JSON.parse(localStorage.getItem('jlptCurrentUser'));
+      if (currentUser && usernameEl) {
+        usernameEl.textContent = currentUser.username;
+      }
+
+      // Update streak
+      if (streakEl) {
+        const key = 'jlptStreak';
+        const today = new Date().toDateString();
+        let streak = JSON.parse(localStorage.getItem(key)) || { lastLogin: null, count: 0 };
+
+        if (streak.lastLogin !== today) {
+          streak.count = streak.lastLogin ? streak.count + 1 : 1;
+          streak.lastLogin = today;
+          localStorage.setItem(key, JSON.stringify(streak));
+        }
+        streakEl.textContent = `🔥 ${streak.count}-day streak`;
+      }
+
+      // Default to Study tab
+      showSection('study');
+    };
+  </script>
+</body>
+</html>

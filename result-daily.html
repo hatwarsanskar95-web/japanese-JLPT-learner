@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎉 Daily Quiz Results | 日本語マスター</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .score-card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      margin: 20px 0 30px;
+    }
+
+    .score-number {
+      font-size: 2.8rem;
+      color: #0077b6;
+      margin: 15px 0;
+    }
+
+    .feedback {
+      font-size: 1.3rem;
+      margin: 15px 0;
+      font-weight: 500;
+    }
+
+    .review-item {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .correct {
+      border-left: 5px solid #2a9d8f;
+    }
+
+    .incorrect {
+      border-left: 5px solid #e63946;
+    }
+
+    .explanation {
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    .level-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      color: white;
+      margin-right: 8px;
+    }
+
+    .n5 { background: #457b9d; }
+    .n4 { background: #e9c46a; }
+    .n3 { background: #e76f51; }
+    .n2 { background: #9c6644; }
+    .n1 { background: #9437ff; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">日本語マスター</div>
+  </nav>
+
+  <div class="container">
+    <h2>Daily Quiz Results</h2>
+
+    <div class="score-card">
+      <h3>Your Score</h3>
+      <div class="score-number" id="scoreDisplay">-- / 100</div>
+      <p class="feedback" id="feedback"></p>
+    </div>
+
+    <h3>Review Your Answers</h3>
+    <div id="reviewContainer"></div>
+  </div>
+
+  <script src="js/quiz-data.js"></script>
+  <script>
+    window.onload = function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      
+      // Reconstruct the same 100-question set (same shuffle logic as daily-quiz.html)
+      const allQuestions = [];
+      Object.keys(window.quizQuestions).forEach(level => {
+        window.quizQuestions[level].forEach(q => {
+          allQuestions.push({ ...q, level });
+        });
+      });
+
+      // Shuffle the same way (Fisher-Yates)
+      for (let i = allQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allQuestions[i], allQuestions[j]] = [allQuestions[j], allQuestions[i]];
+      }
+      
+      // Take first 100 (same as daily-quiz.html)
+      const shuffledQuestions = allQuestions.slice(0, 100);
+
+      let correct = 0;
+      const reviewContainer = document.getElementById('reviewContainer');
+
+      shuffledQuestions.forEach((q, index) => {
+        const userAnswerIndex = parseInt(urlParams.get(`q${index}`));
+        const isCorrect = userAnswerIndex === q.correct;
+
+        if (isCorrect) correct++;
+
+        const item = document.createElement('div');
+        item.className = `review-item ${isCorrect ? 'correct' : 'incorrect'}`;
+
+        const userAnswerText = userAnswerIndex === -1 
+          ? "No answer" 
+          : q.options[userAnswerIndex] || "No answer";
+        const correctAnswerText = q.options[q.correct];
+
+        item.innerHTML = `
+          <h4>
+            Q${index + 1} 
+            <span class="level-badge ${q.level.toLowerCase()}">${q.level}</span>
+            : ${q.question}
+          </h4>
+          <p><strong>Your Answer:</strong> ${userAnswerText}</p>
+          <p><strong>Correct Answer:</strong> ${correctAnswerText}</p>
+          <div class="explanation"><strong>Explanation:</strong> ${q.explanation}</div>
+        `;
+
+        reviewContainer.appendChild(item);
+      });
+
+      // Show final score
+      document.getElementById('scoreDisplay').textContent = `${correct} / 100`;
+      const feedback = document.getElementById('feedback');
+
+      // Feedback based on score
+      if (correct >= 90) {
+        feedback.textContent = "🎉 Master Level! You're JLPT-ready!";
+      } else if (correct >= 75) {
+        feedback.textContent = "🔥 Great job! Keep pushing!";
+      } else if (correct >= 50) {
+        feedback.textContent = "✅ Solid effort! Review mistakes.";
+      } else {
+        feedback.textContent = "📚 Keep practicing! You'll get there.";
+      }
+
+      // Color feedback
+      feedback.style.color = correct >= 75 ? "#2a9d8f" : "#e63946";
+    };
+  </script>
+</body>
+</html>

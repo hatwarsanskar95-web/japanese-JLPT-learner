@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>日本語マスター | Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .login-container {
+      width: 100%; max-width: 800px; margin: 50px auto;
+      border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      background: white; display: flex;
+    }
+    .login-left {
+      flex: 1; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white; padding: 60px 40px; position: relative;
+    }
+    .login-left::before {
+      content: "🌸 寿司 こんにちは 🎌"; position: absolute; top: 20%; left: -60px;
+      opacity: 0.1; font-size: 5rem; transform: rotate(-20deg);
+    }
+    .logo { font-size: 2.8rem; margin-bottom: 15px; }
+    .tagline { font-size: 1.2rem; opacity: 0.9; margin-bottom: 30px; }
+    .features li {
+      margin: 12px 0; list-style: none; padding-left: 25px; position: relative;
+    }
+    .features li::before {
+      content: "✅"; position: absolute; left: 0; color: white;
+    }
+    .login-right {
+      flex: 1; padding: 60px 50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-left">
+      <div class="logo">日本語マスター</div>
+      <div class="tagline">Your Path to JLPT Mastery – N5 to N1</div>
+      <ul class="features">
+        <li>Downloadable PDF Notes</li>
+        <li>2000+ Practice Questions</li>
+        <li>Kanji, Grammar, Vocabulary</li>
+        <li>Real Exam Simulation</li>
+      </ul>
+    </div>
+    <div class="login-right">
+      <h1 class="login-title">Sign In</h1>
+      <p class="login-subtitle">Access your Japanese learning dashboard</p>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" required />
+        </div>
+        <div class="error-message" id="loginError"></div>
+        <button type="submit" class="btn btn-primary">Log In</button>
+      </form>
+      <div style="margin-top:15px; display:flex; justify-content:space-between; font-size:0.95rem;">
+        <a href="register.html" style="color:var(--primary);">Create Account</a>
+        <a href="forgot-password.html" style="color:var(--primary);">Forgot Password?</a>
+      </div>
+    </div>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>

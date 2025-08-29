@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>日本語マスター | Verify Email</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .verify-container {
+      width: 100%; max-width: 500px; margin: 100px auto;
+      padding: 40px; background: white; border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center;
+    }
+    .status-icon { font-size: 3rem; margin-bottom: 20px; }
+    .success { color: #2a9d8f; }
+    .error { color: #e63946; }
+  </style>
+</head>
+<body>
+  <div class="verify-container">
+    <div id="statusIcon" class="status-icon">⏳</div>
+    <h1 id="statusTitle">Verifying Email...</h1>
+    <p id="statusMessage">Please wait...</p>
+  </div>
+  <script src="js/app.js"></script>
+  <script>
+    window.onload = function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+      const email = urlParams.get('email');
+      const icon = document.getElementById('statusIcon');
+      const title = document.getElementById('statusTitle');
+      const msg = document.getElementById('statusMessage');
+
+      if (!token || !email) {
+        icon.textContent = '❌'; icon.className = 'status-icon error';
+        title.textContent = 'Invalid Link'; msg.textContent = 'The link is invalid.';
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem('jlptUsers')) || [];
+      const user = users.find(u => u.email === email && u.verificationToken === token);
+
+      if (user) {
+        user.verified = true;
+        localStorage.setItem('jlptUsers', JSON.stringify(users));
+        icon.textContent = '✅'; icon.className = 'status-icon success';
+        title.textContent = 'Email Verified!';
+        msg.innerHTML = 'Your account is now verified.<br><a href="index.html" style="color:#0077b6;">Go to Login</a>';
+      } else {
+        icon.textContent = '❌'; icon.className = 'status-icon error';
+        title.textContent = 'Verification Failed';
+        msg.textContent = 'Invalid or expired link.';
+      }
+    };
+  </script>
+</body>
+</html>
