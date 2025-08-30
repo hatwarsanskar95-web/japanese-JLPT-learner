@@ -9,9 +9,8 @@
 
 ## 🏷️ Made By
 **Sanskar Hatwar**  
-📧 Email: sanskarhatwar@example.com  
-📱 Portfolio: https://sanskarhatwar.dev  
-💼 GitHub: https://github.com/sanskarhatwar
+📧 Email: sanskarhatwar95@gmail.com    
+💼 GitHub: https://github.com/hatwarsanskar95-web
 
 > "Empowering language learners with technology."
 

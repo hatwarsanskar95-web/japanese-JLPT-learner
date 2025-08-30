@@ -13,30 +13,59 @@
       background: white; display: flex;
     }
     .login-left {
-      flex: 1; background: linear-gradient(135deg, #00b4d8, var(--primary));
+      flex: 1; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white; padding: 60px 40px; position: relative;
     }
     .login-left::before {
-      content: "📘 🎵 🍣 🗼"; position: absolute; top: 20%; left: -60px;
+      content: "🌸 寿司 こんにちは 🎌"; position: absolute; top: 20%; left: -60px;
       opacity: 0.1; font-size: 5rem; transform: rotate(-20deg);
     }
     .logo { font-size: 2.8rem; margin-bottom: 15px; }
-    .login-right { flex: 1; padding: 60px 50px; }
+    .tagline { font-size: 1.2rem; opacity: 0.9; margin-bottom: 30px; }
+    .features li {
+      margin: 12px 0; list-style: none; padding-left: 25px; position: relative;
+    }
+    .features li::before {
+      content: "✅"; position: absolute; left: 0; color: white;
+    }
+    .login-right {
+      flex: 1; padding: 60px 50px;
+    }
+    .note {
+      font-size: 0.9rem; color: #555; margin-top: 10px;
+    }
+    .success-message {
+      text-align: center;
+      padding: 20px;
+      background: #d8f3dc;
+      border: 1px solid #2a9d8f;
+      border-radius: 12px;
+      color: #1a754c;
+      margin: 20px 0;
+    }
   </style>
 </head>
 <body>
   <div class="login-container">
     <div class="login-left">
       <div class="logo">日本語マスター</div>
-      <p>Start your journey from N5 to N1 with structured learning.</p>
+      <div class="tagline">Your Path to JLPT Mastery – N5 to N1</div>
+      <ul class="features">
+        <li>Downloadable PDF Notes</li>
+        <li>2000+ Practice Questions</li>
+        <li>Kanji, Grammar, Vocabulary</li>
+        <li>Real Exam Simulation</li>
+      </ul>
     </div>
     <div class="login-right">
       <h1 class="login-title">Create Account</h1>
-      <p class="login-subtitle">Join thousands mastering Japanese</p>
-      <form id="registerForm">
+      <p class="login-subtitle">Start your Japanese learning journey</p>
+
+      <!-- Registration Form -->
+      <form id="registerForm" style="display:block;" onsubmit="register(event)">
         <div class="form-group">
           <label for="username">Username</label>
-          <input type="text" id="username" placeholder="yourname" required />
+          <input type="text" id="username" placeholder="Your name" required />
         </div>
         <div class="form-group">
           <label for="email">Email</label>
@@ -53,11 +82,71 @@
         <div class="error-message" id="registerError"></div>
         <button type="submit" class="btn btn-primary">Create Account</button>
       </form>
-      <div style="margin-top:20px;">
+
+      <!-- Success + Verify Email -->
+      <div id="verifySection" style="display:none;">
+        <div class="success-message">
+          ✅ Account created!  
+          <br><br>
+          <strong>Note:</strong> This is a demo app. No real email is sent.  
+          Click below to simulate email verification.
+          <br><br>
+          <button onclick="simulateVerify()" class="btn btn-primary">
+            ✔️ Verify Email (Click Here)
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top:15px; text-align:center; font-size:0.95rem;">
         <a href="index.html" style="color:var(--primary);">Already have an account? Log in</a>
       </div>
     </div>
   </div>
+
   <script src="js/app.js"></script>
+  <script>
+    function register(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const errorEl = document.getElementById('registerError');
+
+      if (password !== confirmPassword) {
+        errorEl.textContent = '❌ Passwords do not match.';
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem('jlptUsers')) || [];
+      if (users.some(u => u.email === email)) {
+        errorEl.textContent = '❌ Email already registered.';
+        return;
+      }
+
+      // Save user (not verified yet)
+      const newUser = { username, email, password, verified: false };
+      users.push(newUser);
+      localStorage.setItem('jlptUsers', JSON.stringify(users));
+      localStorage.setItem('jlptCurrentUser', JSON.stringify({ email }));
+
+      // Show verify section
+      document.getElementById('registerForm').style.display = 'none';
+      document.getElementById('verifySection').style.display = 'block';
+    }
+
+    function simulateVerify() {
+      const currentUser = JSON.parse(localStorage.getItem('jlptCurrentUser'));
+      const users = JSON.parse(localStorage.getItem('jlptUsers')) || [];
+
+      const user = users.find(u => u.email === currentUser.email);
+      if (user) {
+        user.verified = true;
+        localStorage.setItem('jlptUsers', JSON.stringify(users));
+        alert('✅ Email verified! You can now access all features.');
+        window.location.href = 'dashboard.html';
+      }
+    }
+  </script>
 </body>
 </html>
